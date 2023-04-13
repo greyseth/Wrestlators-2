@@ -259,3 +259,14 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/Assets/Scenes
+/Assets/Prefabs/BaseMesh
+/Assets/Materials
+/Assets/FlexibleCelShader
+/Assets/Animations
+/Assets/UMotionEditor
+/Assets/UMotionExamples
+/UMotionData
+/Library
+/ProjectSettings
+/Temp
