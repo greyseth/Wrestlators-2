@@ -72,10 +72,15 @@ public class EnemyBasicMovement : MonoBehaviour
     IEnumerator m_Knock()
     {
         knocking = true;
+        stun = true;
 
         yield return new WaitForSeconds(knockTime);
 
         knocking = false;
+
+        yield return new WaitForSeconds(recoverTime);
+
+        stun = false;
     }
 
     private void OnDrawGizmosSelected()
