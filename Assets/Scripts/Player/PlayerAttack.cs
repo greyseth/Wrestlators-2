@@ -7,6 +7,11 @@ public class PlayerAttack : MonoBehaviour
     public float maxDelay = .2f;
     public int maxAtk = 5;
     public float freezeTime = .1f;
+    public float damage = 20;
+
+    [Header("Grab settings")]
+    public float grabTime = .5f;
+    //public float throwTime = 
 
     [Header("Hitbox settings")]
     public DisplayOptions hitboxDisplay;
@@ -39,6 +44,13 @@ public class PlayerAttack : MonoBehaviour
                 movement.anim.SetBool("IsAttacking", true);
                 atkCount++;
                 atkTime = Time.time;
+            }else if (Input.GetButtonDown("Grab"))
+            {
+                atkCount = 0;
+                atkTime = 0;
+                movement.anim.SetBool("IsAttacking", false);
+
+                movement.anim.SetTrigger("Grab");
             }
         }else
         {
@@ -59,10 +71,10 @@ public class PlayerAttack : MonoBehaviour
         {
             if (obj.tag == "Player") continue;
 
-            if (!isFrozen) StartCoroutine(ScreenFreeze());
+            EnemyHealth enemy = obj.GetComponent<EnemyHealth>();
+            if (enemy != null) enemy.TakeDamage(damage, atkCount >= (maxAtk - 1) ? true : false);
 
-            //Do stuff
-            Debug.Log(obj.name);
+            if (!isFrozen && atkCount >= (maxAtk - 1)) StartCoroutine(ScreenFreeze());
         }
     }
 

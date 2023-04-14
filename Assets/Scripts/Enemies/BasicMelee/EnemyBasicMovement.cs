@@ -20,9 +20,10 @@ public class EnemyBasicMovement : MonoBehaviour
     bool stun;
     bool move;
     bool added;
+    [HideInInspector] public bool isDead;
     float playerDist;
     float knockCountdown;
-    [HideInInspector] public float knockDir;
+    float lookDir;
     
     // Start is called before the first frame update
     void Start()
@@ -34,8 +35,14 @@ public class EnemyBasicMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isDead) return;
+
+        lookDir = GameManager.player.position.x > transform.position.x ? 1 : -1;
+
         if (!stun && !knocking)
         {
+            transform.localRotation = Quaternion.Euler(new Vector3(0, 90 * lookDir, 0));
+
             playerDist = Vector3.Distance(transform.position, GameManager.player.position);
             if (playerDist > stopDist)
             {
@@ -63,24 +70,40 @@ public class EnemyBasicMovement : MonoBehaviour
             rb.MovePosition(move);
         }else if (knocking)
         {
-            rb.MovePosition(transform.position + new Vector3(knockDir, transform.position.y, transform.position.z) * knockSpeed * Time.deltaTime);
+            rb.MovePosition(transform.position + new Vector3(-lookDir, 0, 0) * knockSpeed * Time.deltaTime);
         }
     }
 
-    public void Knock() { StartCoroutine(m_Knock()); }
+    public void Stun() { StartCoroutine(m_Stun()); }
+    public void Knock(bool die) { StartCoroutine(m_Knock(die)); }
 
-    IEnumerator m_Knock()
+    IEnumerator m_Stun()
+    {
+        stun = true;
+
+        yield return new WaitForSeconds(stunTime);
+
+        stun = false;
+    }
+
+    IEnumerator m_Knock(bool die)
     {
         knocking = true;
-        stun = true;
+        stun = true;        
 
         yield return new WaitForSeconds(knockTime);
 
         knocking = false;
 
-        yield return new WaitForSeconds(recoverTime);
+        if (!die)
+        {
+            yield return new WaitForSeconds(recoverTime);
 
-        stun = false;
+            stun = false;
+        }else
+        {
+            isDead = true;
+        }
     }
 
     private void OnDrawGizmosSelected()
