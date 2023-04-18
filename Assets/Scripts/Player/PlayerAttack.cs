@@ -11,7 +11,7 @@ public class PlayerAttack : MonoBehaviour
 
     [Header("Grab settings")]
     public float grabTime = .5f;
-    //public float throwTime = 
+    public float throwTime = .5f;
 
     [Header("Hitbox settings")]
     public DisplayOptions hitboxDisplay;
@@ -49,6 +49,7 @@ public class PlayerAttack : MonoBehaviour
                 atkCount = 0;
                 atkTime = 0;
                 movement.anim.SetBool("IsAttacking", false);
+                movement.anim.SetBool("IsGrabbing", true);
 
                 movement.anim.SetTrigger("Grab");
             }
@@ -76,6 +77,33 @@ public class PlayerAttack : MonoBehaviour
 
             if (!isFrozen && atkCount >= (maxAtk - 1)) StartCoroutine(ScreenFreeze());
         }
+    }
+
+    IEnumerator Grab()
+    {
+        bool hasTarget = false;
+
+        Collider[] hit = Physics.OverlapBox(transform.position + hitboxPos, hitboxSize);
+        foreach(Collider obj in hit)
+        {
+            if (obj.tag == "Player") continue;
+
+            EnemyHealth enemy = obj.GetComponent<EnemyHealth>();
+            if (enemy != null)
+            {
+                Debug.Log("Grabbed an enemy");
+                hasTarget = true;
+                break;
+            }
+        }
+
+        yield return new WaitForSeconds(grabTime);
+
+        if (hasTarget) movement.anim.SetTrigger("GrabSuccess");
+
+        yield return new WaitForSeconds(grabTime);
+
+        movement.anim.SetBool("IsGrabbing", false);
     }
 
     IEnumerator ScreenFreeze()

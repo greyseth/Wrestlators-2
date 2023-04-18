@@ -70,7 +70,7 @@ public class PlayerMovement : MonoBehaviour
             Vector3 normalMove = move * speed * Time.deltaTime;
             Vector3 dashMove = new Vector3(move.x, 0, 0) * dashSpeed * Time.deltaTime;
 
-            if (!anim.GetBool("IsAttacking")) controller.Move(dashing ? dashMove : normalMove);
+            if (!anim.GetBool("IsAttacking") && !anim.GetBool("IsGrabbing")) controller.Move(dashing ? dashMove : normalMove);
             if (!Input.GetButtonDown("Jump")) airMove = Vector3.zero;
 
             controller.slopeLimit = 45;

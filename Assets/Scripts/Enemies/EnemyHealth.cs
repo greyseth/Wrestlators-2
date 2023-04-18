@@ -25,6 +25,7 @@ public class EnemyHealth : MonoBehaviour
     public void TakeDamage(float amount, bool knock)
     {
         health -= amount;
+        Debug.Log(gameObject.name + " has been hit");
         if (knock) movement.Knock(health <= 0 ? true : false);
         else movement.Stun();
     }
